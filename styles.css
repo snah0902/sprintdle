@@ -135,14 +135,25 @@ body {
 
 .grid-button {
     background-color: gray;
+    border: 2px solid gray;
     width: 300px;
     height: 90px;
     color: white;
     font-size: 3rem;
     font-family: 'Signika', sans-serif;
     text-align: center;
+    transition: background-color 0.5s ease, border-color 0.5s ease;
+}
+
+.grid-button:hover {
+    background-color: rgb(30, 132, 73);
+    border-color: rgb(23, 111, 44);
+}
+
+.credits {
+    color: dark gray;
 }
 
 a {
-    color: yellow;
+    color: rgb(255, 195, 0);
 }

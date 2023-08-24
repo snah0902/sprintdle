@@ -64,9 +64,11 @@ function updateKeyboard (letter, color) {
     for (const elem of document.getElementsByClassName("keyboard-button")) {
         if (elem.textContent === letter) {
             if (color === "green") {
+                elem.classList.remove("yellow", "gray");
                 elem.classList.add("green");
             } else if (color === "yellow" &&
                        !(elem.classList.contains("green"))) {
+                elem.classList.remove("gray");
                 elem.classList.add("yellow");
             } else if (color === "gray" &&
                        !(elem.classList.contains("green")) &&
@@ -80,8 +82,7 @@ function updateKeyboard (letter, color) {
 // sets the keyboard back to white
 function resetKeyboard () {
     for (const elem of document.getElementsByClassName("keyboard-button")) {
-        elem.style.backgroundColor = "white";
-        elem.style.borderColor = "gray";
+        elem.classList.remove("green", "yellow", "gray");
     }
 }
 
