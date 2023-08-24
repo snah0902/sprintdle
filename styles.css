@@ -94,6 +94,20 @@ body {
     font-family: 'Signika', sans-serif;
 }
 
+.green {
+    background-color: rgb(30, 132, 73);
+    border-color: rgb(23, 111, 44);
+}
+
+.yellow {
+    background-color: rgb(255, 195, 0);
+    border-color: rgb(255, 160, 0);
+}
+
+.gray {
+    background-color: gray;
+}
+
 /* styling for buttons */
 
 .back-button {
@@ -112,9 +126,14 @@ body {
     border-color: #404040;
 }
 
-.practice-button {
-    display: block;
-    margin: auto;
+.button-grid {
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    gap: 20px;
+  }
+
+.grid-button {
     background-color: gray;
     width: 300px;
     height: 90px;
@@ -122,4 +141,8 @@ body {
     font-size: 3rem;
     font-family: 'Signika', sans-serif;
     text-align: center;
+}
+
+a {
+    color: yellow;
 }

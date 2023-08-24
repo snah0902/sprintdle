@@ -7,17 +7,16 @@ const cols = 5;
 const wordLength = 5;
 const numberOfCharacters = 26;
 const validGuessesSet = new Set(validGuesses);
-const greenColor = "rgb(30, 132, 73)";
-const greenBorderColor = "rgb(23, 111, 44)";
-const yellowColor = "rgb(255, 195, 0)";
-const yellowBorderColor = "rgb(255, 160, 0)";
-const grayColor = "gray";
+const millisecondsPerSecond = 1000;
+const decimalPlaces = 2;
 
 // global variables to keep track of current game progress
 let currentRow = 0;
 let currentCol = 0;
 let currentGuess = "";
 let isGameOver = false;
+let startTime = performance.now();
+let endTime = 0;
 
 
 // returns true if the given char is valid, false otherwise
@@ -41,15 +40,11 @@ function makeCountList(word) {
 // global variables to keep generate and keep track of correct word
 let randomIndex = Math.floor(Math.random() * validAnswers.length);
 let correctWord = validAnswers[randomIndex];
-
-// correctWord = "bused";
-
 let correctWordList = makeCountList(correctWord);
 
 // initializes a new game board
 function initBoard () {
     let board = document.getElementById("game-board");
-
     for (let i = 0; i < rows; i++) {
         let row = document.createElement("div")
         row.className = "letter-row"
@@ -66,24 +61,19 @@ function initBoard () {
 
 // updates the keyboard's letter box with the given color
 function updateKeyboard (letter, color) {
-
     for (const elem of document.getElementsByClassName("keyboard-button")) {
         if (elem.textContent === letter) {
-            let elemBackgroundColor = elem.style.backgroundColor;
-            if (color === greenColor) {
-
-                elem.style.backgroundColor = greenColor;
-                elem.style.borderColor = greenBorderColor;
-            } else if (color === yellowColor &&
-                       elemBackgroundColor !== greenColor) {
-                elem.style.backgroundColor = yellowColor;
-                elem.style.borderColor = yellowBorderColor;
-            } else if (color === grayColor &&
-                       elemBackgroundColor !== greenColor &&
-                       elemBackgroundColor !== yellowColor) {
-                elem.style.backgroundColor = grayColor;
+            if (color === "green") {
+                elem.classList.add("green");
+            } else if (color === "yellow" &&
+                       !(elem.classList.contains("green"))) {
+                elem.classList.add("yellow");
+            } else if (color === "gray" &&
+                       !(elem.classList.contains("green")) &&
+                       !(elem.classList.contains("yellow"))) {
+                elem.classList.add("gray");
             }
-        }
+        }  
     }
 }
 
@@ -114,6 +104,7 @@ function resetGame() {
     let message = document.getElementById("error-message");
     message.textContent = "No error message";
     message.style.visibility = "hidden";
+    startTime = performance.now();
 }
 
 // inserts the given key into the board, if possible
@@ -141,6 +132,18 @@ function deleteKey () {
     box.textContent = "";
 }
 
+function endGame (message, hasWon) {
+    endTime = performance.now();
+    let elapsedTimeSeconds = ((endTime - startTime) / millisecondsPerSecond).toFixed(decimalPlaces);
+    if (hasWon) {
+        message.textContent = `You got the word in ${elapsedTimeSeconds} seconds! Press enter to restart.`;
+    } else {
+        message.textContent = `You lost! The word was ${correctWord.toUpperCase()}. Press enter to restart.`;
+    }
+    message.style.visibility = "visible";
+    isGameOver = true;
+}
+
 // compares the current guess to the correct word
 function guessWord () {
     let message = document.getElementById("error-message");
@@ -164,10 +167,9 @@ function guessWord () {
         let letter = currentGuess[i];
         let characterIndex = letter.charCodeAt(0) - "a".charCodeAt(0);
         if (letter === correctWord[i]) {
-            boxes[i].style.backgroundColor = greenColor;
-            boxes[i].style.borderColor = greenBorderColor;
+            boxes[i].classList.add("green");
             countList[characterIndex]--;
-            updateKeyboard(letter, greenColor);    
+            updateKeyboard(letter, "green");    
         }
     }
 
@@ -177,29 +179,24 @@ function guessWord () {
         let characterIndex = letter.charCodeAt(0) - "a".charCodeAt(0);
         if (letter !== correctWord[i]) {
             if (countList[characterIndex] !== 0) {
-                boxes[i].style.backgroundColor = yellowColor;
-                boxes[i].style.borderColor = yellowBorderColor;
+                boxes[i].classList.add("yellow");
                 countList[characterIndex]--;
-                updateKeyboard(letter, yellowColor);
+                updateKeyboard(letter, "yellow");
             } else {
-            boxes[i].style.backgroundColor = grayColor;
-            updateKeyboard(letter, grayColor);
+            boxes[i].classList.add("gray");
+            updateKeyboard(letter, "gray");
             }
         }
     }
     // check to see if game is over
     if (currentGuess === correctWord) {
-        message.textContent = "You got the word! Press enter to restart.";
-        message.style.visibility = "visible";
-        isGameOver = true;
+        endGame(message, true);
     } else {
         currentRow++;
         currentCol = 0;
         currentGuess = "";
         if (currentRow >= rows) {
-            message.textContent = `You lost! The word was ${correctWord.toUpperCase()}. Press enter to restart.`;
-            message.style.visibility = "visible";
-            isGameOver = true;
+            endGame(message, false);
         }
     }
 }
@@ -241,7 +238,6 @@ document.onkeydown = function (e) {
     let key = e.key;
     makeMove(key);
 };
-
 
 
 initBoard();
