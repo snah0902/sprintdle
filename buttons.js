@@ -1,5 +1,5 @@
-function redirectToBaseWordle () {
-    window.location.href = "practice.html";
+function redirectToClassicWordle () {
+    window.location.href = "classic.html";
 }
 
 function redirectToHome () {
