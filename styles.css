@@ -140,7 +140,7 @@ body {
 
 /* styling for buttons */
 
-.back-button {
+#back-button {
     position: absolute;
     top: 30px;
     left: 30px;
@@ -166,6 +166,7 @@ body {
     font-size: 3rem;
     font-family: 'Signika', sans-serif;
     text-align: center;
+    cursor: pointer;
     transition: background-color 0.5s ease, border-color 0.5s ease;
 }
 
@@ -186,6 +187,53 @@ body {
     width: 50px;
     height: 50px;
     cursor: pointer;
+}
+
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0,0,0,0.5);
+  }
+
+.modal-content {
+    background-color: gray;
+    margin: 5% auto;
+    padding: 20px;
+    border: 1px black;
+    width: 50%; /* Could be more or less, depending on screen size */
+}
+
+.close {
+    color: white;
+    float: right;
+    font-size: 40px;
+    font-weight: bold;
+}
+
+.close:hover {
+    color: black;
+    cursor: pointer;
+}
+
+#reset-button {
+    background-color: red;
+    cursor: pointer;
+}
+
+h2 {
+    font-size: 40px;
+    margin: 0px;
+}
+
+h3 {
+    font-size: 25px;
+    text-decoration: underline;
 }
 
 .credits {

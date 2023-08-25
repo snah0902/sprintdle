@@ -17,7 +17,14 @@ let currentGuess = "";
 let isGameOver = false;
 let startTime = performance.now();
 let endTime = 0;
+let currentStreak = 0;
 
+// encodes the back button
+let backButton = document.getElementById("back-button");
+
+backButton.onclick = function() {
+    window.location.href = "index.html";
+}
 
 // returns true if the given char is valid, false otherwise
 function isLetter(char) {
@@ -148,8 +155,56 @@ function addWord (hasWon) {
     timesDiv.insertBefore(timeDiv, timesDiv.firstChild);
 }
 
+// updates the local storage based on the current round
+function updateLocalStorage(hasWon) {
+    // update rounds played
+    let roundsPlayedString = localStorage.getItem("roundsPlayed");
+    if (roundsPlayedString === null) {
+        roundsPlayedString = "0";
+    }
+    roundsPlayedString = ((parseInt(roundsPlayedString)) + 1).toString();
+    localStorage.setItem("roundsPlayed", roundsPlayedString);
+
+    if (hasWon) {
+        // update rounds won
+        let roundsWonString = localStorage.getItem("roundsWon");
+        if (roundsWonString === null) {
+            roundsWonString = "0";
+        }
+        roundsWonString = ((parseInt(roundsWonString)) + 1).toString();
+        localStorage.setItem("roundsWon", roundsWonString);
+
+        // update fastest time
+        let elapsedTimeSeconds = ((endTime - startTime) / millisecondsPerSecond).toFixed(decimalPlaces);
+        let fastestTimeString = localStorage.getItem("fastestTime");
+        if (fastestTimeString !== null) {
+            fastestTimeString = (Math.min(elapsedTimeSeconds, parseInt(fastestTimeString))).toString();
+            localStorage.setItem("fastestTime", fastestTimeString);
+        } else {
+            localStorage.setItem("fastestTime", elapsedTimeSeconds);
+        }
+    }
+    // update longest streak
+    let longestStreakString = localStorage.getItem("longestStreak");
+    if (longestStreakString !== null) {
+        longestStreakString = (Math.max(currentStreak, parseInt(longestStreakString))).toString();
+        localStorage.setItem("longestStreak", longestStreakString);
+    } else {
+        localStorage.setItem("longestStreak", currentStreak);
+    }
+
+}
+
+// ends the game
 function endGame (message, hasWon) {
+    if (hasWon) {
+        currentStreak++;
+    } else {
+        currentStreak = 0;
+    }
+    console.log(currentStreak);
     addWord(hasWon);
+    updateLocalStorage(hasWon);
     if (hasWon) {
         message.textContent = "You got the word! Press enter to restart.";
     } else {
@@ -157,8 +212,6 @@ function endGame (message, hasWon) {
     }
     message.style.visibility = "visible";
     isGameOver = true;
-
-
 }
 
 // compares the current guess to the correct word
