@@ -1,9 +1,13 @@
+// buttons
 
-// change to specific buttons eventually
-function redirectToClassicWordle () {
+
+let classicButton = document.getElementById("classic-button");
+
+classicButton.onclick = function() {
     window.location.href = "classic.html";
 }
 
+// modals
 
 // encodes the stats button
 let statsButton = document.getElementById("stats-button");
@@ -80,5 +84,3 @@ resetButton.onclick = function () {
     removeStats();
     clearStats();
 }
-
-let numberOfRounds = localStorage.getItem("")
