@@ -133,16 +133,32 @@ function deleteKey () {
     box.textContent = "";
 }
 
-function endGame (message, hasWon) {
+function addWord (hasWon) {
     endTime = performance.now();
     let elapsedTimeSeconds = ((endTime - startTime) / millisecondsPerSecond).toFixed(decimalPlaces);
+
+    let timesDiv = document.getElementById("times");
+    let timeDiv = document.createElement("div");
     if (hasWon) {
-        message.textContent = `You got the word in ${elapsedTimeSeconds} seconds! Press enter to restart.`;
+        timeDiv.className = "green-word";
+    } else {
+        timeDiv.className = "red-word";
+    }
+    timeDiv.textContent = `${correctWord.toUpperCase()} ${elapsedTimeSeconds}`;
+    timesDiv.insertBefore(timeDiv, timesDiv.firstChild);
+}
+
+function endGame (message, hasWon) {
+    addWord(hasWon);
+    if (hasWon) {
+        message.textContent = "You got the word! Press enter to restart.";
     } else {
         message.textContent = `You lost! The word was ${correctWord.toUpperCase()}. Press enter to restart.`;
     }
     message.style.visibility = "visible";
     isGameOver = true;
+
+
 }
 
 // compares the current guess to the correct word

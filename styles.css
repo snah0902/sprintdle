@@ -15,7 +15,7 @@ body {
     font-family: 'Signika', sans-serif;
 }
 
-.big-title {
+#big-title {
     text-align: center;
     color: white;
     font-size: 70px;
@@ -23,7 +23,7 @@ body {
     font-family: 'Rowdies', cursive;
 }
 
-.small-title {
+#small-title {
     text-align: center;
     color: white;
     font-size: 45px;
@@ -44,7 +44,37 @@ body {
     align-items: center;
     flex-direction: column;
 }
-    
+
+#game {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: row;
+    gap: 25px;
+}
+
+#times {
+    background-color: gray;
+    height: 250px;
+    width: 150px;
+    overflow-x: hidden;
+    overflow-y: auto;
+    text-align: left;
+
+}
+
+.green-word {
+    color: green;
+    background-color: white;
+    border: 1px solid black;
+}
+
+.red-word {
+    color: red;
+    background-color: white;
+    border: 1px solid black;
+}
+
 .letter-box {
     border: 2px solid gray;
     border-radius: 3px;
