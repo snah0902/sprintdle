@@ -248,6 +248,10 @@ body {
     width: 30%;
 }
 
+#previous-word {
+    text-align: center;
+}
+
 #scores-in-modal {
     text-align: justify;
 }
