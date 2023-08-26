@@ -1,5 +1,5 @@
-import { validAnswers } from "./valid_answers.js";
-import { validGuesses } from "./valid_guesses.js";
+import { validAnswers } from "../words/valid_answers.js";
+import { validGuesses } from "../words/valid_guesses.js";
 
 // global constants
 const rows = 6;
@@ -20,10 +20,12 @@ let endTime = 0;
 let currentStreak = 0;
 
 // encodes the back button
-let backButton = document.getElementById("back-button");
+function initBackButton () {
+    let backButton = document.getElementById("back-button");
 
-backButton.onclick = function() {
-    window.location.href = "index.html";
+    backButton.onclick = function () {
+        window.location.href = "../index.html";
+    }
 }
 
 // returns true if the given char is valid, false otherwise
@@ -195,14 +197,13 @@ function updateLocalStorage(hasWon) {
 
 }
 
-// ends the game
-function endGame (message, hasWon) {
+// ends the round
+function endRound (message, hasWon) {
     if (hasWon) {
         currentStreak++;
     } else {
         currentStreak = 0;
     }
-    console.log(currentStreak);
     addWord(hasWon);
     updateLocalStorage(hasWon);
     if (hasWon) {
@@ -260,13 +261,13 @@ function guessWord () {
     }
     // check to see if game is over
     if (currentGuess === correctWord) {
-        endGame(message, true);
+        endRound(message, true);
     } else {
         currentRow++;
         currentCol = 0;
         currentGuess = "";
         if (currentRow >= rows) {
-            endGame(message, false);
+            endRound(message, false);
         }
     }
 }
@@ -309,6 +310,6 @@ document.onkeydown = function (e) {
     makeMove(key);
 };
 
-
+initBackButton();
 initBoard();
 initKeyboard();

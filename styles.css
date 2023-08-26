@@ -45,7 +45,7 @@ body {
     flex-direction: column;
 }
 
-#game {
+#classic-game {
     display: flex;
     align-items: center;
     justify-content: center;
@@ -60,7 +60,35 @@ body {
     overflow-x: hidden;
     overflow-y: auto;
     text-align: left;
+}
 
+#frenzy-game {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    gap: 25px;
+}
+
+#frenzy-header {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: row;
+    gap: 25px;
+}
+
+.frenzy-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.frenzy-box {
+    background-color: gray;
+    height: 20px;
+    width: 80px;
+    text-align: center;
 }
 
 .green-word {
@@ -189,6 +217,13 @@ body {
     cursor: pointer;
 }
 
+.grid-modal-button {
+    margin: 0% 33%;
+    width: 50px;
+    height: 50px;
+    cursor: pointer;
+}
+
 .modal {
     display: none;
     position: fixed;
@@ -209,6 +244,30 @@ body {
     width: 50%; /* Could be more or less, depending on screen size */
 }
 
+#results-modal-content {
+    width: 30%;
+}
+
+#scores-in-modal {
+    text-align: justify;
+}
+
+.left,
+.right {
+    font-size: 25px;
+    margin: 30px 0px;
+    display: inline-block;
+    width: 50%;
+}
+
+.left {
+    text-align: left;
+}
+
+.right {
+    text-align: right;
+}
+
 .close {
     color: white;
     float: right;
@@ -222,13 +281,16 @@ body {
 }
 
 #reset-button {
+    margin-top: 20px;
     background-color: red;
+    font-family: 'Signika', sans-serif;
     cursor: pointer;
 }
 
 h2 {
     font-size: 40px;
     margin: 0px;
+    text-align: center;
 }
 
 h3 {

@@ -15,14 +15,34 @@
 
     <div class="gamemodes-grid">
       <button class="grid-gamemode" id="classic-button">Classic</button>
-      <button class="grid-gamemode">Frenzy</button>
-      <button class="grid-gamemode">Endurance</button>
+      <button class="grid-gamemode" id="frenzy-button">Frenzy</button>
+      <button class="grid-gamemode">Survival</button>
     </div>
 
     <div class=""></div>
 
     <div class="buttons-grid">
-      <img src="images/question-mark.png" alt="How to play" class="grid-button">
+      <img src="images/question-mark.png" alt="How to play" class="grid-button" id="help-button">
+      <div id="help-modal" class="modal">
+        <div class="modal-content">
+          <span class="close" id="help-close">&times;</span>
+          <h2>How to Play</h2>
+          <h3>Classic</h3>
+          <p>The classic wordle, inspired by NYT's <a
+          href="https://www.nytimes.com/games/wordle/index.html">Wordle</a>! The
+          time that it takes to guess each word is recorded, so go for speed
+          rather than accuracy! It'll be useful to guess three or four words at
+          the start to figure out the actual word.</p>
+          <h3>Frenzy</h3>
+          <p>60 seconds on the clock to guess as many words as possible! The
+          game ends when the timer is up or when the player loses.</p>
+          <h3>Survival</h3>
+          <p>WIP</p>
+        </div>
+      </div>
+
+
+
       <img src="images/stats.png" alt="Stats" class="grid-button" id="stats-button">
       <div id="stats-modal" class="modal">
         <div class="modal-content">
@@ -30,11 +50,19 @@
           <h2>Statistics</h2>
           <h3>Classic</h3>
           <div id="stats-classic"></div>
+          <h3>Frenzy</h3>
+          <div id="stats-frenzy"></div>
           <button id="reset-button">Reset stats</button>
         </div>
       </div>
-      <img src="images/settings.png" alt="Settings" class="grid-button">
-    </div>
+
+      <img src="images/settings.png" alt="Settings" class="grid-button" id="settings-button">
+      <div id="settings-modal" class="modal">
+        <div class="modal-content">
+          <span class="close" id="settings-close">&times;</span>
+          <h2>Settings</h2>
+        </div>
+      </div>
 
     <div class="credits">Game made by Stephen. Check out the <a href="https://github.com/snah0902/sprintdle">source</a> code!</div>
     
