@@ -9,12 +9,13 @@ const numberOfCharacters = 26;
 const validGuessesSet = new Set(validGuesses);
 const millisecondsPerSecond = 1000;
 const startTimeSeconds = 60;
+const startCountdownSeconds = 3;
 
 // global variables to keep track of current game progress
 let currentRow = 0;
 let currentCol = 0;
 let currentGuess = "";
-let isGameOver = false;
+let isGameOver = true;
 let currentScore = 0;
 let highScore = localStorage.getItem("frenzyHighScore");
 if (highScore === null) {
@@ -25,7 +26,6 @@ let timeLeftSeconds = startTimeSeconds;
 // sets up the home buttons
 function initHomeButtons () {
     let homeButtons = document.querySelectorAll(".home-button");
-
     homeButtons.forEach(button => {
         button.addEventListener("click", () => {
             window.location.href = "../index.html";
@@ -82,7 +82,6 @@ function initBoard () {
             box.className = "letter-box"
             row.appendChild(box)
         }
-
         board.appendChild(row)
     }
 }
@@ -114,6 +113,26 @@ function resetKeyboard () {
     }
 }
 
+function makeCountdown () {
+    let countdownSeconds = startCountdownSeconds;
+    let countdownDiv = document.getElementById("countdown");
+    const interval = setInterval(function () {
+        if (countdownSeconds > 0) {
+            countdownDiv.textContent = countdownSeconds;
+            console.log(countdownSeconds);
+            countdownSeconds--;
+        } else if (countdownSeconds === 0) {
+            countdownSeconds--;
+            countdownDiv.textContent = "Go!";
+            isGameOver = false;
+        } else {
+            countdownDiv.textContent = "";
+            clearInterval(interval);
+        }
+    }, millisecondsPerSecond)
+
+}
+
 // resets the game once the player chooses to retry
 function resetGame() {
 
@@ -132,12 +151,9 @@ function resetGame() {
     let message = document.getElementById("error-message");
     message.textContent = "No error message";
     message.style.visibility = "hidden";
-
-    /* add countdown timer here */
-    isGameOver = false;
     initScoresAndTimer();
-
     closeResultsModal();
+    makeCountdown();
 }
 
 
@@ -271,7 +287,7 @@ function guessWord () {
         if (currentRow >= rows) {
             endRound(false);
         }
-    }3
+    }
 }
 
 // makes a move based on user input
@@ -306,6 +322,10 @@ function initKeyboard () {
 
 document.onkeydown = function (e) {
     let key = e.key;
+    if (!isGameOver) {
+        let countdownDiv = document.getElementById("countdown");
+        countdownDiv.textContent = "";
+    }
     makeMove(key);
 };
 
@@ -359,3 +379,5 @@ initHomeButtons();
 initBoard();
 initKeyboard();
 initScoresAndTimer();
+
+makeCountdown();
