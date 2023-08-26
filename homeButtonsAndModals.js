@@ -11,6 +11,11 @@ frenzyButton.onclick = function () {
     window.location.href = "./frenzy/frenzy.html";
 }
 
+let survivalButton = document.getElementById("survival-button");
+survivalButton.onclick = function () {
+    window.location.href = "./survival/survival.html";
+}
+
 // modals
 
 

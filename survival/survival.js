@@ -22,7 +22,6 @@ let currentStreak = 0;
 // encodes the back button
 function initBackButton () {
     let backButton = document.getElementById("back-button");
-
     backButton.onclick = function () {
         window.location.href = "../index.html";
     }
@@ -180,7 +179,7 @@ function updateLocalStorage(hasWon) {
         let elapsedTimeSeconds = ((endTime - startTime) / millisecondsPerSecond).toFixed(decimalPlaces);
         let fastestTimeString = localStorage.getItem("fastestTime");
         if (fastestTimeString !== null) {
-            fastestTimeString = (Math.min(elapsedTimeSeconds, parseFloat(fastestTimeString))).toString();
+            fastestTimeString = (Math.min(elapsedTimeSeconds, parseInt(fastestTimeString))).toString();
             localStorage.setItem("fastestTime", fastestTimeString);
         } else {
             localStorage.setItem("fastestTime", elapsedTimeSeconds);
