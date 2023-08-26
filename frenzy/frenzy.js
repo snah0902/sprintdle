@@ -328,7 +328,7 @@ setInterval(updateTimer, millisecondsPerSecond);
 
 function openResultsModal () {
     let previousWordDiv = document.getElementById("previous-word");
-    previousWordDiv.textContent = `The word was ${correctWord}.`;
+    previousWordDiv.textContent = `The word was ${correctWord.toUpperCase()}.`;
     let resultsModal = document.getElementById("results-modal");
     let scoresInModalDiv = document.getElementById("scores-in-modal");
     let currentScoreInModalSpan = document.createElement("span");

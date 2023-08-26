@@ -29,6 +29,7 @@ body {
     font-size: 45px;
     font-weight: 700;
     font-family: 'Rowdies', cursive;
+    margin-bottom: .5%;
 }
 
 #error-message {

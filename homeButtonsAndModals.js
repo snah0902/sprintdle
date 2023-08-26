@@ -108,6 +108,7 @@ function removeStats () {
 }
 
 function clearStats() {
+    removeStats();
     localStorage.clear();
     addStats();
 }
@@ -123,7 +124,6 @@ statsClose.onclick = function () {
 }
 
 resetButton.onclick = function () {
-    removeStats();
     clearStats();
 }
 
