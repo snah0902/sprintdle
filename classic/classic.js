@@ -55,16 +55,16 @@ let correctWordList = makeCountList(correctWord);
 function initBoard () {
     let board = document.getElementById("game-board");
     for (let i = 0; i < rows; i++) {
-        let row = document.createElement("div")
-        row.className = "letter-row"
+        let row = document.createElement("div");
+        row.className = "letter-row";
         
         for (let j = 0; j < cols; j++) {
-            let box = document.createElement("div")
-            box.className = "letter-box"
-            row.appendChild(box)
+            let box = document.createElement("div");
+            box.className = "letter-box";
+            row.appendChild(box);
         }
 
-        board.appendChild(row)
+        board.appendChild(row);
     }
 }
 
