@@ -13,6 +13,7 @@
 body {
     background-color: #404040;
     font-family: 'Signika', sans-serif;
+    overflow: hidden;
 }
 
 #big-title {
@@ -124,8 +125,25 @@ body {
     top: 0vh;
     left: 0px;
     position: absolute;
-    transition: left 0.5s linear;
+    transition: top 10s linear;
     display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.waindrop-box {
+    border: 2px solid gray;
+    border-radius: 3px;
+    margin: 2px;
+    font-size: 2vw;
+    font-weight: 700;
+    height: 2vw;
+    width: 2vw;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-transform: uppercase;
+    color: white;
 }
 
 .letter-box {

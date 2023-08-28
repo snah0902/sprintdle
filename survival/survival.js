@@ -2,27 +2,33 @@ import { validAnswers } from "../words/valid_answers.js";
 import { validGuesses } from "../words/valid_guesses.js";
 
 // global constants
-const rows = 1;
 const cols = 5;
 const wordLength = 5;
 const numberOfCharacters = 26;
 const validGuessesSet = new Set(validGuesses);
-const millisecondsPerSecond = 1000;
+const startTimeBeforeNextWaindrop = 5000;
 
 // global variables to keep track of current game progress
 let isGameOver = false;
 let currentGuess = "";
+let currentScore = 0;
+let highScore = localStorage.getItem("survivalHighScore");
+if (highScore === null) {
+    highScore = 0;
+}
+let numberOfWaindrops = 100;
+let timeBeforeNextWaindrop = startTimeBeforeNextWaindrop;
 
 // a list which contains all the waindrop objects
 let waindropList = [];
 
-
-// encodes the back button
-function initBackButton () {
-    let backButton = document.getElementById("back-button");
-    backButton.onclick = function () {
-        window.location.href = "../index.html";
-    }
+function initHomeButtons () {
+    let homeButtons = document.querySelectorAll(".home-button");
+    homeButtons.forEach(button => {
+        button.addEventListener("click", () => {
+            window.location.href = "../index.html";
+        });
+    });
 }
 
 // returns true if the given char is valid, false otherwise
@@ -44,7 +50,7 @@ function makeCountList(word) {
 }
 
 // initializes a new waindrop object
-function initWaindropObject (waindropDiv, rowDiv) {
+function initWaindropObject (waindropDiv, rowDiv, currentColumn) {
     let randomIndex = Math.floor(Math.random() * validAnswers.length);
     let correctWord = validAnswers[randomIndex];
     let correctWordList = makeCountList(correctWord);
@@ -52,16 +58,32 @@ function initWaindropObject (waindropDiv, rowDiv) {
         waindropDiv: waindropDiv,
         rowDiv: rowDiv,
         currentRow: 0,
-        currentCol: 0,
+        currentCol: currentColumn,
         isGuessed: false,
         correctWord: correctWord,
         correctWordList: correctWordList
     };
+
     return waindrop;
+}
+
+// change magic numbers as necessary
+function getSpeed () {
+    let speed;
+    if (numberOfWaindrops < 150) {
+        speed = 100 - ((Math.floor(numberOfWaindrops / 10) * 5));
+        console.log(speed);
+    } else {
+        speed = 30;
+    }
+    return speed;
 }
 
 // initializes a new waindrop
 function initWaindrop () {
+    if (isGameOver) {
+        return;
+    }
     let wain = document.getElementById("wain");
     let currentWaindrop = document.createElement("div");
     currentWaindrop.className = "waindrop";
@@ -70,43 +92,34 @@ function initWaindrop () {
     let rowDiv = document.createElement("div");
     rowDiv.className = "letter-row";
         
-    for (let j = 0; j < cols; j++) {
+    for (let i = 0; i < cols; i++) {
         let box = document.createElement("div");
-        box.className = "letter-box";
+        box.className = "waindrop-box";
+        if (i < currentGuess.length) {
+            console.log(currentGuess[i]);
+            box.textContent = (currentGuess[i]).toLowerCase();
+        } 
         rowDiv.appendChild(box);
     }
 
+    let currentColumn = currentGuess.length;
+
     currentWaindrop.appendChild(rowDiv);
     wain.appendChild(currentWaindrop);
-    waindropList.push(initWaindropObject(currentWaindrop, rowDiv));
+    waindropList.push(initWaindropObject(currentWaindrop, rowDiv, currentColumn));
 
-}
+    let timeoutId = setTimeout(() => {
+        // change parameters here
+        currentWaindrop.style.transitionDuration = `${getSpeed()}s`;
+        currentWaindrop.style.top = "100vh";
+        clearTimeout(timeoutId);
+    }, 1000);
 
-// updates the keyboard's letter box with the given color
-function updateKeyboard (letter, color) {
-    for (const elem of document.getElementsByClassName("keyboard-button")) {
-        if (elem.textContent === letter) {
-            if (color === "green") {
-                elem.classList.remove("yellow", "gray");
-                elem.classList.add("green");
-            } else if (color === "yellow" &&
-                       !(elem.classList.contains("green"))) {
-                elem.classList.remove("gray");
-                elem.classList.add("yellow");
-            } else if (color === "gray" &&
-                       !(elem.classList.contains("green")) &&
-                       !(elem.classList.contains("yellow"))) {
-                elem.classList.add("gray");
-            }
-        }  
+    if (timeBeforeNextWaindrop > 5000) {
+        timeBeforeNextWaindrop -= 50;
     }
-}
 
-// sets the keyboard back to white
-function resetKeyboard () {
-    for (const elem of document.getElementsByClassName("keyboard-button")) {
-        elem.classList.remove("green", "yellow", "gray");
-    }
+    numberOfWaindrops++;
 }
 
 // sets global variables back to their initial values and generates a new 
@@ -115,20 +128,15 @@ function resetGame() {
 
     let board = document.getElementById("wain");
     board.replaceChildren();
-    initWaindrop();
-    resetKeyboard();
-
-    currentRow = 0;
-    currentCol = 0;
     currentGuess = "";
-    isGameOver = false;
-    randomIndex = Math.floor(Math.random() * validAnswers.length);
-    correctWord = validAnswers[randomIndex];
-    correctWordList = makeCountList(correctWord);
     let message = document.getElementById("error-message");
     message.textContent = "No error message";
     message.style.visibility = "hidden";
-    startTime = performance.now();
+    waindropList = [];
+    numberOfWaindrops = 0;
+    initWaindrop();
+    isGameOver = false;
+    timeBeforeNextWaindrop = startTimeBeforeNextWaindrop;
 }
 
 // inserts the given key into the board, if possible
@@ -161,6 +169,22 @@ function deleteKey (waindropObject, i) {
     }
     box.textContent = "";
 }
+// ends the game
+function endGame() {
+    if (currentScore > highScore) {
+        highScore = currentScore;
+        localStorage.setItem("survivalHighScore", highScore);
+    }
+    let gamesPlayedString = localStorage.getItem("survivalGamesPlayed");
+    if (gamesPlayedString === null) {
+        gamesPlayedString = "0";
+    }
+    gamesPlayedString = ((parseInt(gamesPlayedString)) + 1).toString();
+    localStorage.setItem("survivalGamesPlayed", gamesPlayedString);
+    isGameOver = true;
+    openResultsModal();
+
+}
 
 // compares the current guess to the correct word. Returns true if guess was 
 // valid, false otherwise
@@ -187,8 +211,7 @@ function guessWord (waindropObject) {
         let characterIndex = letter.charCodeAt(0) - "a".charCodeAt(0);
         if (letter === waindropObject.correctWord[i]) {
             boxes[i].classList.add("green");
-            countList[characterIndex]--;
-            updateKeyboard(letter, "green");    
+            countList[characterIndex]--; 
         }
     }
 
@@ -200,10 +223,8 @@ function guessWord (waindropObject) {
             if (countList[characterIndex] !== 0) {
                 boxes[i].classList.add("yellow");
                 countList[characterIndex]--;
-                updateKeyboard(letter, "yellow");
             } else {
             boxes[i].classList.add("gray");
-            updateKeyboard(letter, "gray");
             }
         }
     }
@@ -216,7 +237,7 @@ function guessWord (waindropObject) {
 // clears waindrop from DOM
 function clearWaindrop(i) {
     let wain = document.getElementById("wain");
-    waindropToRemove = wain.childNodes[i];
+    let waindropToRemove = wain.childNodes[i];
     wain.removeChild(waindropToRemove);
 }
 
@@ -226,13 +247,11 @@ function addNewRow(currentWaindrop) {
         
     for (let j = 0; j < cols; j++) {
         let box = document.createElement("div");
-        box.className = "letter-box";
+        box.className = "waindrop-box";
         rowDiv.appendChild(box);
     }
 
-    // BUG https://stackoverflow.com/questions/23673905/appendchild-is-not-a-function-javascript
-    currentWaindrop.appendChild(rowDiv);
-
+    currentWaindrop.waindropDiv.appendChild(rowDiv);
     currentWaindrop.rowDiv = rowDiv;
     currentWaindrop.currentRow++;
     currentWaindrop.currentCol = 0;
@@ -263,6 +282,7 @@ function makeMove (key) {
         while (i < waindropList.length) {
             let currentWaindrop = waindropList[i];
             if (currentWaindrop.isGuessed) {
+                currentScore++;
                 clearWaindrop(i);
                 waindropList.splice(i, 1);
             }
@@ -271,20 +291,7 @@ function makeMove (key) {
                 i++;
             }
         }
-    }
-}
-
-// initializes the keyboard 
-function initKeyboard () {
-    for (const elem of document.getElementsByClassName("keyboard-button")) {
-        elem.addEventListener("click", function () {
-            let key = elem.textContent;
-            if (key === "Del") {
-                makeMove("Backspace");
-            } else {
-                makeMove(key);
-            }
-        })
+        currentGuess = "";
     }
 }
 
@@ -293,20 +300,67 @@ document.onkeydown = function (e) {
     makeMove(key);
 };
 
-function moveWaindrops () {
+function checkBottom () {
+    if (isGameOver) {
+        return;
+    }
     let waindrops = document.querySelectorAll(".waindrop");
     for (let i = 0; i < waindrops.length; i++) {
         let waindrop = waindrops[i];
         let lbStyle = window.getComputedStyle(waindrop);
-        let topValue = lbStyle.getPropertyValue("top").replace("px", "");
-        waindrop.style.top = (Number(topValue) + 20) + "px";
+        let bottom = lbStyle.getPropertyValue("bottom");
+        
+        bottom = bottom.slice(0, -2);
+        if (parseFloat(bottom) < 0) {
+            endGame();
+            return;
+        }
     }
 }
 
-setInterval(moveWaindrops, millisecondsPerSecond);
+// sets up the results modal
 
-initBackButton();
+function getPreviousWords () {
+    let previousWords = "";
+    for (let i = 0; i < waindropList.length; i++) {
+        let correctWord = waindropList[i].correctWord;
+        previousWords += `${correctWord.toUpperCase()}; `;
+    }
+    previousWords = previousWords.slice(0, -2);
+    return previousWords;
+}
+
+function openResultsModal () {
+    let previousWordsDiv = document.getElementById("previous-words");
+    previousWordsDiv.textContent = `Remaining words: ${getPreviousWords()}`;
+    let resultsModal = document.getElementById("results-modal");
+    let scoresInModalDiv = document.getElementById("scores-in-modal");
+    let currentScoreInModalSpan = document.createElement("span");
+    currentScoreInModalSpan.textContent = `Final Score: ${currentScore}`;
+    currentScoreInModalSpan.className = "left";
+    scoresInModalDiv.appendChild(currentScoreInModalSpan);
+    let highestScoreInModalSpan = document.createElement("span");
+    highestScoreInModalSpan.textContent = `High Score: ${highScore}`;
+    highestScoreInModalSpan.className = "right";
+    scoresInModalDiv.appendChild(highestScoreInModalSpan);
+    resultsModal.style.display = "block";
+}
+
+function closeResultsModal () {
+    let resultsModal = document.getElementById("results-modal");
+    let scoresInModalDiv = document.getElementById("scores-in-modal");
+    scoresInModalDiv.replaceChildren();
+    resultsModal.style.display = "none";
+}
+
+let restartButton = document.querySelector(".restart-button");
+restartButton.onclick = function () {
+    closeResultsModal();
+    resetGame();
+}
+
+setInterval(checkBottom, 10);
+setInterval(initWaindrop, 10000);
+
 initWaindrop();
-initWaindrop();
-initKeyboard();
-console.log(waindropList);
+initHomeButtons();

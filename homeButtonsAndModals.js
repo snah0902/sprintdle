@@ -67,18 +67,18 @@ function addStats () {
     let fastestTimeDiv = document.createElement("div");
     let fastestTime = localStorage.getItem("fastestTime");
     if (fastestTime !== null) {
-        fastestTimeDiv.textContent = `Fastest time: ${fastestTime}`
+        fastestTimeDiv.textContent = `Fastest time: ${fastestTime}`;
     } else {
-        fastestTimeDiv.textContent = "Fastest time: -"
+        fastestTimeDiv.textContent = "Fastest time: -";
     }
     statsClassic.appendChild(fastestTimeDiv);
 
     let longestStreakDiv = document.createElement("div");
     let longestStreak = localStorage.getItem("longestStreak");
     if (longestStreak !== null) {
-        longestStreakDiv.textContent = `Longest streak: ${longestStreak}`
+        longestStreakDiv.textContent = `Longest streak: ${longestStreak}`;
     } else {
-        longestStreakDiv.textContent = "Longest streak: 0"
+        longestStreakDiv.textContent = "Longest streak: 0";
     }
     statsClassic.appendChild(longestStreakDiv);
 
@@ -89,7 +89,7 @@ function addStats () {
     let frenzyGamesPlayedDiv = document.createElement("div");
     let frenzyGamesPlayed = localStorage.getItem("frenzyGamesPlayed");
     if (frenzyGamesPlayed !== null) {
-        frenzyGamesPlayedDiv.textContent = `Games played: ${frenzyGamesPlayed}`
+        frenzyGamesPlayedDiv.textContent = `Games played: ${frenzyGamesPlayed}`;
     } else {
         frenzyGamesPlayedDiv.textContent = "Games played: 0";
     }
@@ -103,6 +103,28 @@ function addStats () {
         frenzyHighScoreDiv.textContent = "High score: 0";
     }
     statsFrenzy.appendChild(frenzyHighScoreDiv);
+
+    // adding survival stats
+
+    let statsSurvival = document.getElementById("stats-survival");
+
+    let survivalGamesPlayedDiv = document.createElement("div");
+    let survivalGamesPlayed = localStorage.getItem("survivalGamesPlayed");
+    if (survivalGamesPlayed !== null) {
+        survivalGamesPlayedDiv.textContent = `Games played: ${survivalGamesPlayed}`;
+    } else {
+        survivalGamesPlayedDiv.textContent = "Games played: 0";
+    }
+    statsSurvival.appendChild(survivalGamesPlayedDiv);
+
+    let survivalHighScoreDiv = document.createElement("div");
+    let survivalHighScore = localStorage.getItem("survivalHighScore");
+    if (survivalHighScore !== null) {
+        survivalHighScoreDiv.textContent = `High Score: ${survivalHighScore}`;
+    } else {
+        survivalHighScoreDiv.textContent = "High Score: 0"
+    }
+    statsSurvival.appendChild(survivalHighScoreDiv);
 }
 
 function removeStats () {
@@ -110,6 +132,8 @@ function removeStats () {
     statsClassic.replaceChildren();
     let statsFrenzy = document.getElementById("stats-frenzy");
     statsFrenzy.replaceChildren();
+    let statsSurvival = document.getElementById("stats-survival");
+    statsSurvival.replaceChildren();
 }
 
 function clearStats() {
