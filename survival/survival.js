@@ -6,7 +6,8 @@ const cols = 5;
 const wordLength = 5;
 const numberOfCharacters = 26;
 const validGuessesSet = new Set(validGuesses);
-const startTimeBeforeNextWaindrop = 5000;
+const startTimeBeforeNextWaindrop = 10000;
+const startNumberOfLives = 3;
 
 // global variables to keep track of current game progress
 let isGameOver = false;
@@ -16,8 +17,13 @@ let highScore = localStorage.getItem("survivalHighScore");
 if (highScore === null) {
     highScore = 0;
 }
-let numberOfWaindrops = 100;
+let numberOfWaindrops = 0;
 let timeBeforeNextWaindrop = startTimeBeforeNextWaindrop;
+let livesLeft = startNumberOfLives;
+let myTimer;
+
+// a list which contains the words the user failed on (TODO)
+let failedWordsList = [];
 
 // a list which contains all the waindrop objects
 let waindropList = [];
@@ -49,6 +55,19 @@ function makeCountList(word) {
     return countList;
 }
 
+// initialize scores and timer to DOM
+function initScoresAndLives () {
+    currentScore = 0;
+    let currentScoreDiv = document.getElementById("current-score");
+    currentScoreDiv.textContent = currentScore;
+    
+    let livesDiv = document.getElementById("lives");
+    livesDiv.textContent = livesLeft;
+
+    let highScoreDiv = document.getElementById("high-score");
+    highScoreDiv.textContent = highScore;
+}
+
 // initializes a new waindrop object
 function initWaindropObject (waindropDiv, rowDiv, currentColumn) {
     let randomIndex = Math.floor(Math.random() * validAnswers.length);
@@ -68,13 +87,12 @@ function initWaindropObject (waindropDiv, rowDiv, currentColumn) {
 }
 
 // change magic numbers as necessary
-function getSpeed () {
+function getTimeToFall () {
     let speed;
-    if (numberOfWaindrops < 150) {
-        speed = 100 - ((Math.floor(numberOfWaindrops / 10) * 5));
-        console.log(speed);
+    if (numberOfWaindrops < 50) {
+        speed = 50 - ((Math.floor(numberOfWaindrops / 10) * 5));
     } else {
-        speed = 30;
+        speed = 25;
     }
     return speed;
 }
@@ -88,7 +106,7 @@ function initWaindrop () {
     let currentWaindrop = document.createElement("div");
     currentWaindrop.className = "waindrop";
     /* magic number */
-    currentWaindrop.style.left = `${Math.random() * 80}vw`;
+    currentWaindrop.style.left = `${Math.random() * 85}vw`;
     let rowDiv = document.createElement("div");
     rowDiv.className = "letter-row";
         
@@ -96,7 +114,6 @@ function initWaindrop () {
         let box = document.createElement("div");
         box.className = "waindrop-box";
         if (i < currentGuess.length) {
-            console.log(currentGuess[i]);
             box.textContent = (currentGuess[i]).toLowerCase();
         } 
         rowDiv.appendChild(box);
@@ -110,7 +127,7 @@ function initWaindrop () {
 
     let timeoutId = setTimeout(() => {
         // change parameters here
-        currentWaindrop.style.transitionDuration = `${getSpeed()}s`;
+        currentWaindrop.style.transitionDuration = `${getTimeToFall()}s`;
         currentWaindrop.style.top = "100vh";
         clearTimeout(timeoutId);
     }, 1000);
@@ -135,8 +152,11 @@ function resetGame() {
     waindropList = [];
     numberOfWaindrops = 0;
     initWaindrop();
+    initScoresAndLives();
     isGameOver = false;
     timeBeforeNextWaindrop = startTimeBeforeNextWaindrop;
+    livesLeft = startNumberOfLives;
+    failedWordsList = [];
 }
 
 // inserts the given key into the board, if possible
@@ -239,6 +259,7 @@ function clearWaindrop(i) {
     let wain = document.getElementById("wain");
     let waindropToRemove = wain.childNodes[i];
     wain.removeChild(waindropToRemove);
+    waindropList.splice(i, 1);
 }
 
 function addNewRow(currentWaindrop) {
@@ -283,15 +304,23 @@ function makeMove (key) {
             let currentWaindrop = waindropList[i];
             if (currentWaindrop.isGuessed) {
                 currentScore++;
+                let currentScoreDiv = document.getElementById("current-score");
+                currentScoreDiv.textContent = currentScore;
                 clearWaindrop(i);
-                waindropList.splice(i, 1);
             }
             else {
                 addNewRow(currentWaindrop);
                 i++;
             }
         }
+        console.log(waindropList);
         currentGuess = "";
+        if (waindropList.length === 0) {
+            initWaindrop();
+            // reset the timer
+            clearInterval(myTimer);
+            myTimer = setInterval(initWaindrop, startTimeBeforeNextWaindrop);
+        }
     }
 }
 
@@ -312,27 +341,45 @@ function checkBottom () {
         
         bottom = bottom.slice(0, -2);
         if (parseFloat(bottom) < 0) {
-            endGame();
-            return;
+            failedWordsList.push(waindropList[i].correctWord.toUpperCase());
+            livesLeft--;
+            let livesDiv = document.getElementById("lives");
+            livesDiv.textContent = livesLeft;
+            clearWaindrop(i);
+            if (livesLeft <= 0) {
+                endGame();
+                return;
+            }
         }
     }
 }
 
 // sets up the results modal
 
-function getPreviousWords () {
-    let previousWords = "";
+function getFailedWords () {
+    let failedWords = "";
+    for (let failedWord of failedWordsList) {
+        failedWords += `${failedWord}; `;
+    }
+    failedWords = failedWords.slice(0, -2);
+    return failedWords;
+}
+
+function getRemainingWords () {
+    let remainingWords = "";
     for (let i = 0; i < waindropList.length; i++) {
         let correctWord = waindropList[i].correctWord;
-        previousWords += `${correctWord.toUpperCase()}; `;
+        remainingWords += `${correctWord.toUpperCase()}; `;
     }
-    previousWords = previousWords.slice(0, -2);
-    return previousWords;
+    remainingWords = remainingWords.slice(0, -2);
+    return remainingWords;
 }
 
 function openResultsModal () {
-    let previousWordsDiv = document.getElementById("previous-words");
-    previousWordsDiv.textContent = `Remaining words: ${getPreviousWords()}`;
+    let failedWordsDiv = document.getElementById("failed-words");
+    failedWordsDiv.textContent = `Failed words: ${getFailedWords()}`;
+    let remainingWordsDiv = document.getElementById("remaining-words");
+    remainingWordsDiv.textContent = `Remaining words: ${getRemainingWords()}`;
     let resultsModal = document.getElementById("results-modal");
     let scoresInModalDiv = document.getElementById("scores-in-modal");
     let currentScoreInModalSpan = document.createElement("span");
@@ -360,7 +407,8 @@ restartButton.onclick = function () {
 }
 
 setInterval(checkBottom, 10);
-setInterval(initWaindrop, 10000);
+myTimer = setInterval(initWaindrop, startTimeBeforeNextWaindrop);
 
 initWaindrop();
 initHomeButtons();
+initScoresAndLives();

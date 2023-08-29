@@ -64,7 +64,8 @@ body {
     text-align: left;
 }
 
-#frenzy-game {
+#frenzy-game,
+#survival-game {
     display: flex;
     align-items: center;
     justify-content: center;
@@ -72,7 +73,8 @@ body {
     gap: 25px;
 }
 
-#frenzy-header {
+#frenzy-header,
+#survival-header {
     display: flex;
     align-items: center;
     justify-content: center;
@@ -80,13 +82,15 @@ body {
     gap: 25px;
 }
 
-.frenzy-container {
+.frenzy-container,
+.survival-container {
     display: flex;
     flex-direction: column;
     align-items: center;
 }
 
-.frenzy-box {
+.frenzy-box,
+.survival-box {
     background-color: gray;
     height: 20px;
     width: 80px;

@@ -15,6 +15,23 @@
 
     <img src="../images/back-button.png" alt="Back button" id="back-button" class="home-button">
 
+    <div id="survival-game">
+      <div id="survival-header">
+        <div class="survival-container">
+          Current Score
+          <div id="current-score" class="survival-box"></div>
+        </div>
+        <div class="survival-container">
+          Lives Left
+          <div id="lives" class="survival-box"></div>
+        </div>
+        <div class="survival-container">
+          High Score
+          <div id="high-score" class="survival-box"></div>
+        </div>
+    </div>
+
+
     <div id="wain"></div>
 
     <div id="error-message" style="visibility: hidden">No error message</div>
@@ -22,7 +39,8 @@
     <div id="results-modal" class="modal">
       <div id="results-modal-content" class="modal-content">
         <h2>Game over!</h2>
-        <div id="previous-words"></div>
+        <div id="failed-words"></div>
+        <div id="remaining-words"></div>
         <div id="scores-in-modal"></div>
         <div class="buttons-grid">
           <img src="../images/retry.png" alt="Retry" class="restart-button grid-modal-button">
